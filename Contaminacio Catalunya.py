@@ -8,11 +8,9 @@ st.set_page_config(page_title="Air Quality in Catalunya", layout="wide")
 
 st.title("Air Quality Heatmap in Catalunya")
 
-# --- Lazy load CSV to avoid freezing Streamlit ---
-if st.button("Load Heatmap"):
-    with st.spinner("Loading data... this may take a while for large files"):
-        # Dropbox link to CSV (ensure ?dl=1 for direct download)
-        url = url = "https://ucb38c8600ec903e63a36f443768.dl.dropboxusercontent.com/cd/0/get/C0DlDq7sFDvonygGZBaeakWzQ2wN3wV2niarOEo9UcLC8AAacSkS3_tdSo3gVqBm26j9Z4GaKggj7g4kbUaBm7eCWmtB80m9CIufiPAzgCWEuNAlaGMygpbU5CjRQi5GxNKQbkw7E8MKTeYBIuvIrVpfK6bSOKIEQaRMdYvYR5ouww/file?_download_id=383459632035761521941075124236586397510915882434811952999394567254&_log_download_success=1#"
+# --- Load CSV directly from Dropbox ---
+url = "https://www.dropbox.com/scl/fi/o6wm4aavblw2j1azoymex/Qualitat_de_l_aire.csv?rlkey=kkd92s8jjw0qk0w1jokxk9gvv&dl=1"
+df = pd.read_csv(url, encoding="UTF-8")
 
         try:
             # For safety, limit to 50k rows if CSV is huge
