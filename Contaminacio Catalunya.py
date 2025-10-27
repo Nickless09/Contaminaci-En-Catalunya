@@ -8,7 +8,8 @@ st.title("Contaminació Catalunya - Test File 1")
 
 # -------------------------
 # GitHub URL for CSV
-csv_url = "https://raw.githubusercontent.com/Nickless09/air_quality_heatmap/main/dat/Qualitat_de_l_aire_part1.csv"
+csv_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/refs/heads/main/dat/Qualitat_de_l_aire_part1.csv"
+df = load_csv(csv_url)
 
 @st.cache_data(show_spinner=True)
 def load_csv(url):
