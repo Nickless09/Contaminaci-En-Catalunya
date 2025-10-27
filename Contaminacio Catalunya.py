@@ -7,10 +7,11 @@ from streamlit_folium import st_folium
 st.title("Contaminació Catalunya - Test File 1")
 
 # -------------------------
-# GitHub URL for CSV
-csv_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/refs/heads/main/dat/Qualitat_de_l_aire_part1.csv"
-df = load_csv(csv_url)
+# GitHub raw CSV URL (must be raw!)
+csv_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/Qualitat_de_l_aire_part1.csv"
 
+# -------------------------
+# Define function BEFORE calling it
 @st.cache_data(show_spinner=True)
 def load_csv(url):
     df = pd.read_csv(url, encoding="UTF-8")
@@ -21,6 +22,8 @@ def load_csv(url):
     df = df.dropna(subset=["LATITUD", "LONGITUD", "AVG_CONTAM"])
     return df
 
+# -------------------------
+# Call the function AFTER defining it
 df = load_csv(csv_url)
 
 st.write(f"Loaded {len(df)} rows from CSV.")
