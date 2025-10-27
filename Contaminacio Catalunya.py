@@ -5,40 +5,35 @@ from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
 st.set_page_config(page_title="Air Quality in Catalunya", layout="wide")
-
 st.title("Air Quality Heatmap in Catalunya")
 
 # --- Load CSV directly from Dropbox ---
 url = "https://www.dropbox.com/scl/fi/o6wm4aavblw2j1azoymex/Qualitat_de_l_aire.csv?rlkey=kkd92s8jjw0qk0w1jokxk9gvv&dl=1"
-df = pd.read_csv(url, encoding="UTF-8")
 
-        try:
-            # For safety, limit to 50k rows if CSV is huge
-            df = pd.read_csv(url, encoding="UTF-8", nrows=50000)
-        except Exception as e:
-            st.error(f"Error loading CSV: {e}")
-            st.stop()
+try:
+    # For safety, limit to 50k rows if CSV is huge
+    df = pd.read_csv(url, encoding="UTF-8", nrows=50000)
+    st.success(f"Loaded {len(df)} rows")
+except Exception as e:
+    st.error(f"Error loading CSV: {e}")
+    st.stop()
 
-        st.success(f"Loaded {len(df)} rows")
+# Compute average contamination
+hour_cols = [f"{h:02d}h" for h in range(1, 25)]
+df["AVG_CONTAM"] = df[hour_cols].mean(axis=1)
 
-        # Compute average contamination
-        hour_cols = [f"{h:02d}h" for h in range(1, 25)]
-        df["AVG_CONTAM"] = df[hour_cols].mean(axis=1)
+# Drop rows with missing coordinates
+df = df.dropna(subset=["LATITUD", "LONGITUD", "AVG_CONTAM"])
 
-        # Drop rows with missing coordinates
-        df = df.dropna(subset=["LATITUD", "LONGITUD", "AVG_CONTAM"])
+# Show first few rows
+st.dataframe(df.head())
 
-        # Show first few rows
-        st.dataframe(df.head())
+# Create Folium map
+map_center = [df["LATITUD"].mean(), df["LONGITUD"].mean()]
+m = folium.Map(location=map_center, zoom_start=10)
 
-        # Create Folium map
-        map_center = [df["LATITUD"].mean(), df["LONGITUD"].mean()]
-        m = folium.Map(location=map_center, zoom_start=10)
+heat_data = df[["LATITUD", "LONGITUD", "AVG_CONTAM"]].values.tolist()
+HeatMap(heat_data, radius=15).add_to(m)
 
-        heat_data = df[["LATITUD", "LONGITUD", "AVG_CONTAM"]].values.tolist()
-        HeatMap(heat_data, radius=15).add_to(m)
-
-        st_folium(m, width=700, height=500)
-
-else:
-    st.info("Click the button above to load the heatmap.")
+# Show map in Streamlit
+st_folium(m, width=700, height=500)
