@@ -1,5 +1,4 @@
-streamlipandas as pd
-folium
-from folium.plugins import HeatMap
-from streamlit_folium import st_folium
-os
+streamlit==1.30.0
+pandas==2.1.0
+folium==0.15.0
+streamlit-folium==0.12.0
