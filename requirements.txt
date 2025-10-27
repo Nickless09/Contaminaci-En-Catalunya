@@ -1,4 +1,7 @@
-pandas
-folium
 streamlit
+pandas
+numpy
+folium
 streamlit-folium
+matplotlib
+seaborn
