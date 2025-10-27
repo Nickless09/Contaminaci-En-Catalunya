@@ -8,8 +8,7 @@ st.title("Contaminació Catalunya - Test File 1")
 
 # -------------------------
 # GitHub raw CSV URL (must be raw!)
-csv_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/Qualitat_de_l_aire_part1.csv"
-
+csv_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/Qualitat_de_l_aire_part2.csv"
 # -------------------------
 # Define function BEFORE calling it
 @st.cache_data(show_spinner=True)
