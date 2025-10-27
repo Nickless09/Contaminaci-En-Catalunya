@@ -5,8 +5,9 @@ from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
 # --- Load CSV directly from Gofile ---
-url = "https://www.dropbox.com/scl/fi/o6wm4aavblw2j1azoymex/Qualitat_de_l_aire.csv?rlkey=kkd92s8jjw0qk0w1jokxk9gvv&dl=1"
+url = "https://www.dropbox.com/scl/fi/o6wm4aavblw2j1azoymex/Qualitat_de_l_aire.csv?dl=1"
 df = pd.read_csv(url, encoding="UTF-8")
+
 st.dataframe(df.head())  # To quickly check the data
 
 
