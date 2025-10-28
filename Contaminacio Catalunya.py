@@ -1,10 +1,12 @@
 import streamlit as st
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
-st.title("🌍 Contaminació Catalunya - Heatmap combinat")
+st.title("🌍 Contaminació Catalunya")
 
 # -------------------------
 # 🔗 GitHub raw CSV URLs
@@ -51,7 +53,30 @@ else:
 
     st_folium(m, width=700, height=500)
 
+ # -------------------------
+    # 📊 Average Contamination by Hour
+    st.subheader("📈 Mitjana de Contaminació per Hora del Dia")
 
+    hour_cols = [f"{h:02d}h" for h in range(1, 25)]
+    valid_hour_cols = [col for col in hour_cols if col in df.columns]
+
+    if valid_hour_cols:
+        avg_per_hour = df[valid_hour_cols].mean()
+        data = pd.DataFrame({
+            'Hour': list(range(1, len(valid_hour_cols) + 1)),
+            'Average Contamination': avg_per_hour.values
+        })
+
+        plt.figure(figsize=(12, 6))
+        sns.barplot(x='Hour', y='Average Contamination', data=data, palette='viridis')
+        plt.title('Average Contamination by Hour of the Day')
+        plt.xlabel('Hour of the Day')
+        plt.ylabel('Average Contamination')
+        plt.xticks(rotation=0)
+
+        st.pyplot(plt)
+    else:
+        st.warning("No hourly data found in the loaded CSVs.")
 
 
 # import streamlit as st
