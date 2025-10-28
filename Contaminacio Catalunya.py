@@ -100,13 +100,13 @@ with tab1:
 
     # ----- Fix for custom tiles that need attribution -----
     tile_dict = {
-        "OpenStreetMap": {"tiles": "OpenStreetMap", "attr": None},
-        "Stamen Terrain": {"tiles": "Stamen Terrain", "attr": None},
-        "Stamen Toner": {"tiles": "Stamen Toner", "attr": "Map tiles by Stamen Design, CC BY 3.0 — Map data © OpenStreetMap"},
-        "CartoDB positron": {"tiles": "CartoDB positron", "attr": None},
-        "CartoDB dark_matter": {"tiles": "CartoDB dark_matter", "attr": None},
+        "OpenStreetMap": {"tiles": "OpenStreetMap", "attr": "Map data © OpenStreetMap contributors"},
+        "Stamen Terrain": {"tiles": "Stamen Terrain", "attr": "Map tiles by Stamen Design, CC BY 3.0 — Map data © OpenStreetMap contributors"},
+        "Stamen Toner": {"tiles": "Stamen Toner", "attr": "Map tiles by Stamen Design, CC BY 3.0 — Map data © OpenStreetMap contributors"},
+        "CartoDB positron": {"tiles": "CartoDB positron", "attr": "Map tiles by Carto, © OpenStreetMap contributors"},
+        "CartoDB dark_matter": {"tiles": "CartoDB dark_matter", "attr": "Map tiles by Carto, © OpenStreetMap contributors"},
     }
-    tile_info = tile_dict.get(tile_option, {"tiles": "OpenStreetMap", "attr": None})
+    tile_info = tile_dict.get(tile_option, {"tiles": "OpenStreetMap", "attr": "Map data © OpenStreetMap contributors"})
 
     m = folium.Map(
         location=map_center,
@@ -198,6 +198,7 @@ with tab4:
 # 🪶 Footer
 st.markdown("---")
 st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per Nickless09")
+
 
 
 
@@ -393,7 +394,7 @@ st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per Nickless
 # # ----------------------------------
 # # 🪶 Footer
 # st.markdown("---")
-# st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per Nickless09")
+# st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per SemGr")
 
 
 
