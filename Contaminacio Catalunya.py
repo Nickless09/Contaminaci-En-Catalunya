@@ -25,7 +25,7 @@ Explora el mapa, les tendències i les estadístiques interactives.
 
 # ----------🗂️ Load multiple CSV files from GitHub
 base_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/"
-file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(2, 13)]  # adjust range as needed
+file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(2, 13)]
 urls = [base_url + name for name in file_names]
 
 @st.cache_data(show_spinner=False)
@@ -34,11 +34,12 @@ def load_multiple_csvs(url_list):
     for url in url_list:
         try:
             df = pd.read_csv(url, encoding="UTF-8")
-            # Clean column names
             df.columns = df.columns.str.strip()
+
             hour_cols = [f"{h:02d}h" for h in range(1, 25)]
             if all(col in df.columns for col in hour_cols):
                 df["AVG_CONTAM"] = df[hour_cols].mean(axis=1)
+
             df = df.dropna(subset=["LATITUD", "LONGITUD", "AVG_CONTAM"])
             dfs.append(df)
         except Exception as e:
@@ -56,13 +57,15 @@ if df.empty:
     st.error("❌ No s'han pogut carregar dades. Comprova que les rutes siguin correctes i públiques.")
     st.stop()
 
-# ----------🔹 Ensure Year column exists BEFORE sidebar
+# ----------📆 Ensure Year and Month exist BEFORE sidebar filters
 if "DATA" in df.columns:
     df["DATA"] = pd.to_datetime(df["DATA"], errors='coerce', dayfirst=True)
     df["Year"] = df["DATA"].dt.year
+    df["Month"] = df["DATA"].dt.month
 else:
     np.random.seed(42)
     df["Year"] = np.random.choice([2021, 2022, 2023, 2024], len(df))
+    df["Month"] = np.random.randint(1, 13, len(df))
 
 # ----------📊 Summary Metrics
 st.markdown("### 📈 Resum de Dades")
@@ -83,7 +86,7 @@ col3.metric("🌫️ Mitjana contaminació", f"{df['AVG_CONTAM'].mean():.2f}")
 st.sidebar.header("⚙️ Filtres")
 tile_option = "OpenStreetMap"
 
-# --- Contamination slider
+# Contamination slider
 contam_range = st.sidebar.slider(
     "🌫️ Filtra per nivell de contaminació:",
     min_value=float(df["AVG_CONTAM"].min()),
@@ -92,7 +95,7 @@ contam_range = st.sidebar.slider(
 )
 df = df[df["AVG_CONTAM"].between(*contam_range)]
 
-# --- Year filter
+# Year filter
 year_options = sorted(df["Year"].dropna().unique())
 selected_years = st.sidebar.multiselect(
     "📅 Filtra per Any:",
@@ -101,7 +104,7 @@ selected_years = st.sidebar.multiselect(
 )
 df = df[df["Year"].isin(selected_years)]
 
-# --- Station filter
+# Station filter
 if station_col:
     station_options = sorted(df[station_col].dropna().unique())
     selected_stations = st.sidebar.multiselect(
@@ -133,12 +136,14 @@ with tab2:
     st.subheader("📈 Mitjana de Contaminació per Hora del Dia")
     hour_cols = [f"{h:02d}h" for h in range(1, 25)]
     valid_hour_cols = [col for col in hour_cols if col in df.columns]
+
     if valid_hour_cols:
         avg_per_hour = df[valid_hour_cols].mean()
         data_hour = pd.DataFrame({
             'Hour': list(range(1, len(valid_hour_cols) + 1)),
             'Average Contamination': avg_per_hour.values
         })
+
         plt.figure(figsize=(12, 6))
         sns.barplot(x='Hour', y='Average Contamination', data=data_hour, palette='viridis', legend=False)
         plt.title('Average Contamination by Hour of the Day')
@@ -151,8 +156,10 @@ with tab2:
 # ----------📆 TAB 3: Yearly & Monthly Plots
 with tab3:
     st.subheader("📆 Contaminació Mitjana per Any i Mes")
+
     yearly_avg = df.groupby("Year", as_index=False)["AVG_CONTAM"].mean()
     monthly_avg = df.groupby("Month", as_index=False)["AVG_CONTAM"].mean()
+
     fig, axes = plt.subplots(1, 2, figsize=(14, 4))
 
     # Yearly plot
@@ -173,6 +180,7 @@ with tab3:
     axes[1].set_ylabel("Average Contamination")
     axes[1].set_xticks(range(12))
     axes[1].set_xticklabels(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
+
     plt.tight_layout()
     st.pyplot(fig)
 
@@ -180,6 +188,7 @@ with tab3:
 with tab4:
     st.subheader("📋 Dades Brutes")
     st.dataframe(df.head(100))
+
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button("📥 Descarrega dades filtrades", csv, "filtered_data.csv", "text/csv")
 
