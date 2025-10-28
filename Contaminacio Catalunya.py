@@ -192,7 +192,13 @@ with tab4:
     st.dataframe(df.head(100))
 
     csv = df.to_csv(index=False).encode("utf-8")
-    st.download_button("📥 Descarrega dades filtrades", csv
+    st.download_button("📥 Descarrega dades filtrades", csv, "filtered_data.csv", "text/csv")
+
+# ----------------------------------
+# 🪶 Footer
+st.markdown("---")
+st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per Nickless09")
+
 
 
 
