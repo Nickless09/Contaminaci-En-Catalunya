@@ -8,16 +8,14 @@ import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
-# ----------------------------------
-# 🌟 Page configuration
+# ----------🌟 Page configuration
 st.set_page_config(
     page_title="Contaminació Catalunya",
     page_icon="🌍",
     layout="wide",
 )
 
-# ----------------------------------
-# 🧭 Title and Description
+# ----------🧭 Title and Description
 st.title("🌍 Contaminació de l'Aire a Catalunya")
 st.markdown("""
 Aquest panell interactiu mostra dades de **qualitat de l'aire a Catalunya**, 
@@ -25,8 +23,7 @@ incloent la contaminació mitjana per hora, mes i any.
 Explora el mapa, les tendències i les estadístiques interactives.
 """)
 
-# ----------------------------------
-# 🗂️ Load multiple CSV files from GitHub
+# ----------🗂️ Load multiple CSV files from GitHub
 base_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/"
 file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(2, 13)]  # adjust range as needed
 urls = [base_url + name for name in file_names]
@@ -53,8 +50,7 @@ def load_multiple_csvs(url_list):
     else:
         return pd.DataFrame(columns=["LATITUD", "LONGITUD", "AVG_CONTAM"])
 
-# ----------------------------------
-# 💫 Loading animation while data loads
+# ----------💫 Loading animation while data loads
 with st.spinner("Carregant dades des de GitHub... això pot trigar uns segons ⏳"):
     df = load_multiple_csvs(urls)
 
@@ -62,8 +58,7 @@ if df.empty:
     st.error("❌ No s'han pogut carregar dades. Comprova que les rutes siguin correctes i públiques.")
     st.stop()
 
-# ----------------------------------
-# 📊 Summary Metrics
+# ----------📊 Summary Metrics
 st.markdown("### 📈 Resum de Dades")
 col1, col2, col3 = st.columns(3)
 col1.metric("🔢 Files carregades", f"{len(df):,}")
@@ -78,8 +73,7 @@ else:
 col2.metric("📍 Estacions", station_count)
 col3.metric("🌫️ Mitjana contaminació", f"{df['AVG_CONTAM'].mean():.2f}")
 
-# ----------------------------------
-# ⚙️ Filters (Sidebar)
+# ----------⚙️ Filters (Sidebar)
 st.sidebar.header("⚙️ Filtres")
 tile_option = "OpenStreetMap"  # ✅ Only keep one map type
 
@@ -91,8 +85,17 @@ contam_range = st.sidebar.slider(
 )
 df = df[df["AVG_CONTAM"].between(*contam_range)]
 
-# ----------------------------------
-# 🧭 Tabs
+# --- Estació (Station) filter ---
+if station_col:
+    station_options = sorted(df[station_col].dropna().unique())
+    selected_stations = st.sidebar.multiselect(
+        "🏭 Filtra per Estació:",
+        options=station_options,
+        default=station_options  # Show all by default
+    )
+    df = df[df[station_col].isin(selected_stations)]
+
+# ----------🧭 Tabs
 tab1, tab2, tab3, tab4 = st.tabs([
     "🗺️ Heatmap",
     "⏰ Contaminació per Hora",
@@ -100,8 +103,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "📋 Dades i Descàrrega"
 ])
 
-# ----------------------------------
-# 🗺️ TAB 1: Heatmap
+# ----------🗺️ TAB 1: Heatmap
 with tab1:
     st.subheader("🗺️ Mapa de Contaminació (Folium Heatmap)")
 
@@ -114,8 +116,7 @@ with tab1:
 
     st_folium(m, width=900, height=550)
 
-# ----------------------------------
-# ⏰ TAB 2: Hourly Contamination
+# ----------⏰ TAB 2: Hourly Contamination
 with tab2:
     st.subheader("📈 Mitjana de Contaminació per Hora del Dia")
 
@@ -138,8 +139,7 @@ with tab2:
     else:
         st.warning("No s'han trobat dades horàries al CSV.")
 
-# ----------------------------------
-# 📆 TAB 3: Yearly & Monthly Plots
+# ----------📆 TAB 3: Yearly & Monthly Plots
 with tab3:
     st.subheader("📆 Contaminació Mitjana per Any i Mes")
 
@@ -179,8 +179,7 @@ with tab3:
     plt.tight_layout()
     st.pyplot(fig)
 
-# ----------------------------------
-# 📋 TAB 4: Data and Download
+# ----------📋 TAB 4: Data and Download
 with tab4:
     st.subheader("📋 Dades Brutes")
     st.dataframe(df.head(100))
@@ -188,8 +187,7 @@ with tab4:
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button("📥 Descarrega dades filtrades", csv, "filtered_data.csv", "text/csv")
 
-# ----------------------------------
-# 🪶 Footer
+# ----------🪶 Footer
 st.markdown("---")
 st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per SemGr")
 
