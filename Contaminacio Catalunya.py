@@ -37,6 +37,10 @@ def load_multiple_csvs(url_list):
     for url in url_list:
         try:
             df = pd.read_csv(url, encoding="UTF-8")
+
+            # 🔧 Clean column names
+            df.columns = df.columns.str.strip()
+
             hour_cols = [f"{h:02d}h" for h in range(1, 25)]
             if all(col in df.columns for col in hour_cols):
                 df["AVG_CONTAM"] = df[hour_cols].mean(axis=1)
@@ -63,16 +67,21 @@ if df.empty:
 st.markdown("### 📈 Resum de Dades")
 col1, col2, col3 = st.columns(3)
 col1.metric("🔢 Files carregades", f"{len(df):,}")
-col2.metric("📍 Estacions", df["NOM_ESTACIO"].nunique() if "NOM_ESTACIO" in df else "N/A")
+
+# ✅ Automatically detect station name column
+station_col = next((col for col in df.columns if "nom" in col.lower() and "estacio" in col.lower()), None)
+if station_col:
+    station_count = df[station_col].nunique()
+else:
+    station_count = "N/A"
+
+col2.metric("📍 Estacions", station_count)
 col3.metric("🌫️ Mitjana contaminació", f"{df['AVG_CONTAM'].mean():.2f}")
 
 # ----------------------------------
 # ⚙️ Filters (Sidebar)
 st.sidebar.header("⚙️ Filtres")
-tile_option = st.sidebar.selectbox(
-    "🗺️ Tipus de mapa:",
-    ["OpenStreetMap"]
-)
+tile_option = "OpenStreetMap"  # ✅ Only keep one map type
 
 contam_range = st.sidebar.slider(
     "🌫️ Filtra per nivell de contaminació:",
@@ -98,11 +107,7 @@ with tab1:
 
     map_center = [df["LATITUD"].mean(), df["LONGITUD"].mean()]
 
-    m = folium.Map(
-        location=map_center,
-        zoom_start=8,
-        tiles="OpenStreetMap"
-    )
+    m = folium.Map(location=map_center, zoom_start=8, tiles=tile_option)
 
     heat_data = df[["LATITUD", "LONGITUD", "AVG_CONTAM"]].values.tolist()
     HeatMap(heat_data, radius=15).add_to(m)
@@ -125,14 +130,7 @@ with tab2:
         })
 
         plt.figure(figsize=(12, 6))
-        # ✅ Updated to avoid palette warning
-        sns.barplot(
-            x='Hour',
-            y='Average Contamination',
-            data=data_hour,
-            palette=list(sns.color_palette("viridis", n_colors=len(data_hour))),
-            dodge=False
-        )
+        sns.barplot(x='Hour', y='Average Contamination', data=data_hour, palette='viridis', legend=False)
         plt.title('Average Contamination by Hour of the Day')
         plt.xlabel('Hour of the Day')
         plt.ylabel('Average Contamination')
@@ -146,7 +144,6 @@ with tab3:
     st.subheader("📆 Contaminació Mitjana per Any i Mes")
 
     if "DATA" in df.columns:
-        # ✅ Fix date parsing warning
         df["DATA"] = pd.to_datetime(df["DATA"], errors='coerce', dayfirst=True)
         df["Year"] = df["DATA"].dt.year
         df["Month"] = df["DATA"].dt.month
@@ -163,30 +160,16 @@ with tab3:
 
     # --- Yearly plot ---
     norm = mcolors.Normalize(vmin=yearly_avg["AVG_CONTAM"].min(), vmax=yearly_avg["AVG_CONTAM"].max())
-    colors = plt.cm.coolwarm(norm(yearly_avg["AVG_CONTAM"]))
-    sns.barplot(
-        x="Year",
-        y="AVG_CONTAM",
-        data=yearly_avg,
-        ax=axes[0],
-        palette=list(colors),
-        dodge=False
-    )
+    colors = plt.cm.coolwarm(norm(yearly_avg["AVG_CONTAM"])).tolist()
+    sns.barplot(x="Year", y="AVG_CONTAM", data=yearly_avg, ax=axes[0], palette=colors, legend=False)
     axes[0].set_title("Average Contamination by Year")
     axes[0].set_xlabel("Year")
     axes[0].set_ylabel("Average Contamination")
 
     # --- Monthly plot ---
     norm_month = mcolors.Normalize(vmin=monthly_avg["AVG_CONTAM"].min(), vmax=monthly_avg["AVG_CONTAM"].max())
-    colors_month = plt.cm.Greens(norm_month(monthly_avg["AVG_CONTAM"]))
-    sns.barplot(
-        x="Month",
-        y="AVG_CONTAM",
-        data=monthly_avg,
-        ax=axes[1],
-        palette=list(colors_month),
-        dodge=False
-    )
+    colors_month = plt.cm.Greens(norm_month(monthly_avg["AVG_CONTAM"])).tolist()
+    sns.barplot(x="Month", y="AVG_CONTAM", data=monthly_avg, ax=axes[1], palette=colors_month, legend=False)
     axes[1].set_title("Average Contamination by Month")
     axes[1].set_xlabel("Month")
     axes[1].set_ylabel("Average Contamination")
@@ -204,6 +187,11 @@ with tab4:
 
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button("📥 Descarrega dades filtrades", csv, "filtered_data.csv", "text/csv")
+
+# ----------------------------------
+# 🪶 Footer
+st.markdown("---")
+st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per Nickless09")
 
 # ----------------------------------
 # 🪶 Footer
