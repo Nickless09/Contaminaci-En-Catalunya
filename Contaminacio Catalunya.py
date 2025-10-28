@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors  # ✅ This is what fixes your error
 import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
