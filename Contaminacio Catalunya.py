@@ -18,7 +18,7 @@ st.set_page_config(
 # ----------🧭 Title and Description
 st.title("🌍 Contaminació de l'Aire a Catalunya")
 st.markdown("""
-Aquest panell interactiu mostra dades de **qualitat de l'aire a Catalunya 1992 - 2025**, 
+Aquest panell interactiu mostra dades de **qualitat de l'aire a Catalunya 1991 - 2025**, 
 incloent la contaminació mitjana per hora, mes i any.  
 Explora el mapa, les tendències i les estadístiques interactives.
 """)
