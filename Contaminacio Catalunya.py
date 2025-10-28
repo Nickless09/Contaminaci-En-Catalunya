@@ -30,10 +30,10 @@ def load_multiple_csvs(url_list):
             dfs.append(df)
         except Exception as e:
             st.warning(f"⚠️ Could not read {url}: {e}")
-    # if dfs:
-    #     return pd.concat(dfs, ignore_index=True)
-    # else:
-    #     return pd.DataFrame(columns=["LATITUD", "LONGITUD", "AVG_CONTAM"])
+     if dfs:
+         return pd.concat(dfs, ignore_index=True)
+     else:
+         return pd.DataFrame(columns=["LATITUD", "LONGITUD", "AVG_CONTAM"])
 
 # -------------------------
 # ✅ Load all CSVs (note the correct function call!)
