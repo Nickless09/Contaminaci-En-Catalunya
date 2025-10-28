@@ -166,6 +166,9 @@ with tab3:
     axes[0].set_xlabel("Year")
     axes[0].set_ylabel("Average Contamination")
 
+    # Format x-axis labels: show only last 2 digits and rotate 45 degrees
+    axes[0].set_xticklabels([str(int(y))[-2:] for y in yearly_avg["Year"]], rotation=45)
+
     # --- Monthly plot ---
     norm_month = mcolors.Normalize(vmin=monthly_avg["AVG_CONTAM"].min(), vmax=monthly_avg["AVG_CONTAM"].max())
     colors_month = plt.cm.Greens(norm_month(monthly_avg["AVG_CONTAM"])).tolist()
