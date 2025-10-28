@@ -28,7 +28,7 @@ Explora el mapa, les tendències i les estadístiques interactives.
 # ----------------------------------
 # 🗂️ Load multiple CSV files from GitHub
 base_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/"
-file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(2, 5)]  # adjust range as needed
+file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(2, 10)]  # adjust range as needed
 urls = [base_url + name for name in file_names]
 
 @st.cache_data(show_spinner=False)
