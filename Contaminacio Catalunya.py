@@ -85,6 +85,16 @@ contam_range = st.sidebar.slider(
 )
 df = df[df["AVG_CONTAM"].between(*contam_range)]
 
+# --- Year filter ---
+if "Year" in df.columns:
+    year_options = sorted(df["Year"].dropna().unique())
+    selected_years = st.sidebar.multiselect(
+        "📅 Filtra per Any:",
+        options=year_options,
+        default=year_options  # Show all by default
+    )
+    df = df[df["Year"].isin(selected_years)]
+
 # --- Estació (Station) filter ---
 if station_col:
     station_options = sorted(df[station_col].dropna().unique())
