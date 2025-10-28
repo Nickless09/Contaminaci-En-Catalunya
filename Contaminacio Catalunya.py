@@ -7,7 +7,7 @@ import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
-st.title("🌍 Contaminació Catalunya")
+st.title("🌍 Contaminació En Catalunya")
 
 # -------------------------
 # 🔗 GitHub raw CSV URLs
