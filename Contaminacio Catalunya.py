@@ -42,7 +42,7 @@ df = load_multiple_csvs(urls)
 if df.empty:
     st.error("No data could be loaded. Check that your CSV URLs are correct and public.")
 else:
-    st.success(f"Loaded {len(df)} rows from {len(urls)} CSV files.")
+    # st.success(f"Loaded {len(df)} rows from {len(urls)} CSV files.")
 
     # -------------------------
     # Create Folium heatmap
