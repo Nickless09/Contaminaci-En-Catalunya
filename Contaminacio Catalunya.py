@@ -9,7 +9,7 @@ st.title("🌍 Contaminació Catalunya - Heatmap combinat")
 # -------------------------
 # 🔗 GitHub raw CSV URLs
 base_url = "https://raw.githubusercontent.com/Nickless09/Contaminaci-En-Catalunya/main/dat/"
-file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(1, 5)]  # 👈 change to range(1, 71) for all 70 files
+file_names = [f"Qualitat_de_l_aire_part{i}.csv" for i in range(2, 5)]  # 👈 change to range(1, 71) for all 70 files
 urls = [base_url + name for name in file_names]
 
 # -------------------------
