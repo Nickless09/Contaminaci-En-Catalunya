@@ -77,6 +77,55 @@ else:
         st.pyplot(plt)
     else:
         st.warning("No hourly data found in the loaded CSVs.")
+        
+# -------------------------
+# 📅 Average Contamination by Year and Month
+st.subheader("📅 Mitjana Anual i Mensual de Contaminació")
+
+if "DATA" in df.columns:
+    df["DATA"] = pd.to_datetime(df["DATA"], errors="coerce")
+    df["Year"] = df["DATA"].dt.year
+    df["Month"] = df["DATA"].dt.month
+
+    yearly_avg = df.groupby("Year", as_index=False)["AVG_CONTAM"].mean()
+    monthly_avg = df.groupby("Month", as_index=False)["AVG_CONTAM"].mean()
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+
+    # --- Yearly plot ---
+    norm = mcolors.Normalize(vmin=yearly_avg["AVG_CONTAM"].min(), vmax=yearly_avg["AVG_CONTAM"].max())
+    cmap = plt.cm.coolwarm
+    colors = cmap(norm(yearly_avg["AVG_CONTAM"]))
+
+    sns.barplot(x="Year", y="AVG_CONTAM", data=yearly_avg, ax=axes[0], palette=colors)
+    axes[0].set_title("Average Contamination by Year")
+    axes[0].set_xlabel("Year")
+    axes[0].set_ylabel("Average Contamination")
+
+    year_labels = yearly_avg["Year"].astype(str).str[-2:]
+    axes[0].set_xticks(range(len(year_labels)))
+    axes[0].set_xticklabels(year_labels, rotation=45)
+
+    # --- Monthly plot ---
+    norm_month = mcolors.Normalize(vmin=monthly_avg["AVG_CONTAM"].min(), vmax=monthly_avg["AVG_CONTAM"].max())
+    colors_month = plt.cm.Greens(norm_month(monthly_avg["AVG_CONTAM"]))
+
+    sns.barplot(x="Month", y="AVG_CONTAM", data=monthly_avg, ax=axes[1], palette=colors_month)
+    axes[1].set_title("Average Contamination by Month")
+    axes[1].set_xlabel("Month")
+    axes[1].set_ylabel("Average Contamination")
+    axes[1].set_xticks(range(12))
+    axes[1].set_xticklabels(
+        ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+
+    plt.tight_layout()
+    st.pyplot(fig)
+else:
+    st.warning("No 'DATA' column found — unable to calculate yearly/monthly averages.")
+
+
+
+
 
 
 # import streamlit as st
