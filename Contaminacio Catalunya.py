@@ -191,7 +191,7 @@ with tab4:
 # ----------------------------------
 # 🪶 Footer
 st.markdown("---")
-st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per Nickless09")
+st.caption("Dades de qualitat de l'aire — Desenvolupat amb ❤️ per SemGr")
 
 
 # import streamlit as st
